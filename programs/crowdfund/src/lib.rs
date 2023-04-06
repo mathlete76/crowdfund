@@ -6,10 +6,10 @@ use std::str::FromStr;
 declare_id!("EYChmD6FbmkkAw84tHpeSAwTn75Uqht6YJQd9Ra7Lpkf");
 
 // Mainnet USDC address. For devnet replace with a dummy token and use it's mint address
-const USDC_MINT_ADDRESS: &str = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+// const USDC_MINT_ADDRESS: &str = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 
 // Devnet "USDC" address
-/* const USDC_MINT_ADDRESS: &str = "USE YOUR DUMMY TOKEN MINT ADDRESS HERE WHEN TESTING"; */
+const USDC_MINT_ADDRESS: &str = "4cHh7sn93hqWWmWaY4ALpCzDfvLi5qQ9svM5kUnLcd2d";
 
 #[program]
 pub mod crowdfund {
@@ -29,6 +29,12 @@ pub mod crowdfund {
     }
 
     pub fn deposit(ctx: Context<Deposit>, amount: u64) -> ProgramResult {
+
+        let sale_state = &mut ctx.accounts.state;
+        if !sale_state.started || sale_state.ended {
+            return Err(ProgramError::Custom(CustomError::SaleNotActive as u32));
+        }
+
         let cpi_accounts = Transfer {
             from: ctx.accounts.user_usdc_account.to_account_info(),
             to: ctx.accounts.sale_vault.to_account_info(),
