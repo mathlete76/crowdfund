@@ -32,11 +32,12 @@ export const CreateCrowdFund: FC = () => {
     const [saleVaultPDA, setSaleVaultPDA] = useState(null);
     const [saleStatePDA, setSaleStatePDA] = useState(null);
 
+
     const fetchPDAs = async (): Promise<void> => {
-        return new Promise(async (resolve, reject) => {
+        return new Promise<void>(async (resolve, reject) => {
             try {
                 const wallet = ourWallet;
-    
+
                 const [saleVault, saleVaultNonce] = PublicKey.findProgramAddressSync(
                     [utils.bytes.utf8.encode("crowdfund"), wallet.publicKey.toBuffer()],
                     programID
@@ -45,7 +46,7 @@ export const CreateCrowdFund: FC = () => {
                     [utils.bytes.utf8.encode("fund_state"), wallet.publicKey.toBuffer()],
                     programID
                 );
-    
+
                 setSaleVaultPDA(saleVault.toString());
                 setSaleStatePDA(saleState.toString());
                 resolve();
@@ -55,14 +56,13 @@ export const CreateCrowdFund: FC = () => {
             }
         });
     };
-    
 
     const [walletStatus, setWalletStatus] = useState(null);
 
     const checkCrowdFunderStatus = async () => {
         try {
             await fetchPDAs();
-    
+
             if (saleVaultPDA && saleStatePDA) {
                 setWalletStatus(`Crowd Funder Account: ${saleVaultPDA}\nCrowd Funder State Account: ${saleStatePDA}`);
             } else {
@@ -72,7 +72,8 @@ export const CreateCrowdFund: FC = () => {
             console.error("Error checking CrowdFunder status:", error);
         }
     };
-    
+
+
 
     useEffect(() => {
         if (ourWallet?.publicKey) {
@@ -111,9 +112,11 @@ export const CreateCrowdFund: FC = () => {
 
             console.log("Crowd Funder Account Created at : " + saleVault.toString());
             console.log("Crowd Funder State Account Created at : " + saleState.toString());
+            checkCrowdFunderStatus();
         } catch (error) {
             notify({ type: 'error', message: 'CrowdFunder Creation Failed!' });
             console.log("Error while initlising crowd funder" + error);
+            checkCrowdFunderStatus();
         }
     }
 
@@ -141,9 +144,10 @@ export const CreateCrowdFund: FC = () => {
             })
 
             notify({ type: 'success', message: 'CrowdFunder Opened!' });
-
+            checkCrowdFunderStatus();
             console.log("Crowd Funder Started at : " + saleVault.toString());
         } catch (error) {
+            checkCrowdFunderStatus();
             console.log("Error while starting crowd funder" + error);
         }
     }
