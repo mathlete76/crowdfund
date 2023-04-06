@@ -5,7 +5,7 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import { notify } from "../utils/notifications";
 
 import { Program, AnchorProvider, web3, utils, BN } from '@project-serum/anchor';
-import idl from "../../../target/idl/crowdfund.json";
+import idl from "../../crowdfund.json";
 import { PublicKey } from '@solana/web3.js';
 import {
     ASSOCIATED_TOKEN_PROGRAM_ID,
