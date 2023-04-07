@@ -65,6 +65,11 @@
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "usdcVault",
+          "isMut": true,
+          "isSigner": false
         }
       ],
       "args": [
