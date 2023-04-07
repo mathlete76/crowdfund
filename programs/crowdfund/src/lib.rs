@@ -9,7 +9,8 @@ declare_id!("EYChmD6FbmkkAw84tHpeSAwTn75Uqht6YJQd9Ra7Lpkf");
 // const USDC_MINT_ADDRESS: &str = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 
 // Devnet "USDC" address
-const USDC_MINT_ADDRESS: &str = "4cHh7sn93hqWWmWaY4ALpCzDfvLi5qQ9svM5kUnLcd2d";
+const USDC_MINT_ADDRESS: &str = "DDfaVKveDiXYcezeLQa2aZZyJRSd92MZBPRBLbweBbby";
+
 
 #[program]
 pub mod crowdfund {
@@ -30,24 +31,19 @@ pub mod crowdfund {
 
     pub fn deposit(ctx: Context<Deposit>, amount: u64) -> ProgramResult {
 
-        let sale_state = &mut ctx.accounts.state;
-        if !sale_state.started || sale_state.ended {
-            return Err(ProgramError::Custom(CustomError::SaleNotActive as u32));
-        }
+        // let sale_state = &mut ctx.accounts.state;
+        // if !sale_state.started || sale_state.ended {
+        //     return Err(ProgramError::Custom(CustomError::SaleNotActive as u32));
+        // }
 
         let cpi_accounts = Transfer {
             from: ctx.accounts.user_usdc_account.to_account_info(),
-            to: ctx.accounts.sale_vault.to_account_info(),
+            to: ctx.accounts.usdc_vault.to_account_info(),
             authority: ctx.accounts.user.to_account_info(),
         };
         let cpi_program = ctx.accounts.token_program.to_account_info();
         let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
         token::transfer(cpi_ctx, amount)?;
-    
-        let sale_state = &mut ctx.accounts.state;
-        if !sale_state.started || sale_state.ended {
-            return Err(ProgramError::Custom(CustomError::SaleNotActive as u32));
-        }
     
         (&mut ctx.accounts.sale_vault).usdc_balance += amount;
         Ok(())
@@ -81,6 +77,7 @@ pub mod crowdfund {
             return Err(ProgramError::Custom(CustomError::NotAuthorized as u32));
         }
         sale_state.started = true;
+        sale_state.ended = false;
         Ok({})
     }
 
@@ -147,7 +144,11 @@ pub struct Deposit<'info>{
     #[account(constraint = usdc_mint.key() == usdc_mint_address())]
     pub usdc_mint: Account<'info, Mint>,
     pub token_program: Program<'info, Token>,
+    #[account(mut)]
+    pub usdc_vault: Account<'info, TokenAccount>, // The new field for usdc_vault
 }
+
+
 
 #[derive(Accounts)]
 pub struct Withdraw<'info>{
