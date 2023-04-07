@@ -234,7 +234,6 @@ export const CreateCrowdFund: FC = () => {
                     user: anchProvider.wallet.publicKey,
                     state: saleState,
                     userUsdcAccount,
-                    usdcMint: new PublicKey(usdcMint),
                     tokenProgram: TOKEN_PROGRAM_ID,
                     usdcVault, // Make sure this variable is defined with the correct PublicKey
 

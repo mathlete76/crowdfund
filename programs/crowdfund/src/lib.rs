@@ -141,8 +141,6 @@ pub struct Deposit<'info>{
     pub state: Account<'info, State>,
     #[account(mut)]
     pub user_usdc_account: Account<'info, TokenAccount>,
-    #[account(constraint = usdc_mint.key() == usdc_mint_address())]
-    pub usdc_mint: Account<'info, Mint>,
     pub token_program: Program<'info, Token>,
     #[account(mut)]
     pub usdc_vault: Account<'info, TokenAccount>, // The new field for usdc_vault
