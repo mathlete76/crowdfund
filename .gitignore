@@ -3,6 +3,6 @@
 .yarn
 **/*.rs.bk
 node_modules
-test-ledger#
+test-ledger
 target
 .next
